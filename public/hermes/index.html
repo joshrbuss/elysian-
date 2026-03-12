@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hermes â Profit Per Path</title>
+  <meta name="description" content="Stop chasing volume. Start chasing profit. hermes reveals the keywords that actually make money.">
+  <meta property="og:title" content="hermes â Profit Per Path">
+  <meta property="og:description" content="Stop chasing volume. Start chasing profit. hermes reveals the keywords that actually make money.">
+  <meta property="og:type" content="website">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(107, 114, 128, 0.1);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #F5A623;
+      text-decoration: none;
+    }
+
+    .back-link {
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+
+    .back-link:hover {
+      color: #F5A623;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #9ca3af;
+      max-width: 600px;
+      margin: 0 auto;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+
+    .calculator-section {
+      background: rgba(31, 41, 55, 0.5);
+      border: 1px solid rgba(107, 114, 128, 0.2);
+      border-radius: 12px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .calculator-section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+
+    .input-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .input-group {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .input-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-field label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #d1d5db;
+    }
+
+    .input-field input {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(107, 114, 128, 0.3);
+      border-radius: 8px;
+      padding: 0.75rem;
+      color: #e5e7eb;
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .input-field input:focus {
+      outline: none;
+      border-color: #F5A623;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .button-group {
+        flex-direction: column;
+      }
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: #F5A623;
+      color: #0f0f1e;
+    }
+
+    .btn-primary:hover {
+      background: #D4910A;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(107, 114, 128, 0.2);
+      color: #e5e7eb;
+      border: 1px solid rgba(107, 114, 128, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(107, 114, 128, 0.3);
+      border-color: rgba(107, 114, 128, 0.5);
+    }
+
+    .sample-keywords {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: rgba(17, 24, 39, 0.5);
+      border-radius: 8px;
+    }
+
+    .sample-keyword {
+      padding: 0.75rem 1rem;
+      background: rgba(245, 166, 35, 0.1);
+      border: 1px solid rgba(245, 166, 35, 0.3);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #F5A623;
+      transition: all 0.2s ease;
+    }
+
+    .sample-keyword:hover {
+      background: rgba(245, 166, 35, 0.2);
+      border-color: rgba(245, 166, 35, 0.6);
+    }
+
+    .results {
+      margin-bottom: 3rem;
+    }
+
+    .result-card {
+      background: rgba(31, 41, 55, 0.5);
+      border-left: 4px solid #6b7280;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .result-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .result-card.profitable {
+      border-left-color: #10b981;
+    }
+
+    .result-card.unprofitable {
+      border-left-color: #ef4444;
+    }
+
+    .result-keyword {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+      color: #e5e7eb;
+    }
+
+    .result-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+    }
+
+    .metric-label {
+      color: #9ca3af;
+    }
+
+    .metric-value {
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .insight-box {
+      background: rgba(245, 166, 35, 0.1);
+      border-left: 4px solid #F5A623;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .insight-box h3 {
+      color: #F5A623;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .insight-box p {
+      color: #d1d5db;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .chart-section {
+      background: rgba(31, 41, 55, 0.5);
+      border: 1px solid rgba(107, 114, 128, 0.2);
+      border-radius: 12px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .chart-section h2 {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 400px;
+      margin-bottom: 2rem;
+    }
+
+    .cta-section {
+      background: rgba(245, 166, 35, 0.1);
+      border: 1px solid rgba(245, 166, 35, 0.3);
+      border-radius: 12px;
+      padding: 3rem;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .cta-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .cta-section p {
+      color: #9ca3af;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .email-form {
+      display: flex;
+      gap: 0.75rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .email-form {
+        flex-direction: column;
+      }
+    }
+
+    .email-form input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(245, 166, 35, 0.3);
+      border-radius: 8px;
+      color: #e5e7eb;
+      font-family: inherit;
+    }
+
+    .email-form input:focus {
+      outline: none;
+      border-color: #F5A623;
+    }
+
+    .email-form button {
+      padding: 0.75rem 2rem;
+      background: #F5A623;
+      color: #0f0f1e;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .email-form button:hover {
+      background: #D4910A;
+    }
+
+    footer {
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.9rem;
+      padding-top: 3rem;
+      border-top: 1px solid rgba(107, 114, 128, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/" class="logo">hermes</a>
+      <a href="/" class="back-link">â Back to all products</a>
+    </header>
+
+    <section class="hero">
+      <h1>Stop Chasing Volume. Start Chasing Profit.</h1>
+      <p>hermes reveals the keywords your competitors ignore â the ones that actually make money.</p>
+    </section>
+
+    <div class="calculator-section">
+      <h2>Calculate Your Hermes Score</h2>
+
+      <div class="sample-keywords">
+        <div class="sample-keyword" onclick="addSampleKeyword('best crm software')">best crm software</div>
+        <div class="sample-keyword" onclick="addSampleKeyword('crm for landscaping business')">crm for landscaping business</div>
+        <div class="sample-keyword" onclick="addSampleKeyword('how to organize client data')">how to organize client data</div>
+        <div class="sample-keyword" onclick="addSampleKeyword('field service crm with invoicing')">field service crm with invoicing</div>
+        <div class="sample-keyword" onclick="addSampleKeyword('salesforce alternative')">salesforce alternative</div>
+      </div>
+
+      <div class="input-group">
+        <div class="input-field">
+          <label for="keyword">Keyword</label>
+          <input type="text" id="keyword" placeholder="Enter a keyword">
+        </div>
+        <div class="input-field">
+          <label for="difficulty">SEO Difficulty (0-100)</label>
+          <input type="number" id="difficulty" min="0" max="100" placeholder="e.g., 45">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <div class="input-field">
+          <label for="volume">Monthly Search Volume</label>
+          <input type="number" id="volume" placeholder="e.g., 2400">
+        </div>
+        <div class="input-field">
+          <label for="cpc">Average CPC ($)</label>
+          <input type="number" id="cpc" step="0.01" placeholder="e.g., 12.50">
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="addKeyword()">Add Keyword</button>
+        <button class="btn-secondary" onclick="loadSamples()">Load Sample Data</button>
+        <button class="btn-secondary" onclick="clearAll()">Clear All</button>
+      </div>
+    </div>
+
+    <div class="results" id="results"></div>
+
+    <div id="insightBox"></div>
+
+    <div class="chart-section" id="chartSection" style="display: none;">
+      <h2>Traditional Ranking vs Hermes Ranking</h2>
+      <div class="chart-container">
+        <canvas id="rankingChart"></canvas>
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <h2>Want to Run This on YOUR Keywords?</h2>
+      <p>Get early access to hermes and discover your most profitable paths.</p>
+      <div class="email-form">
+        <input type="email" id="ctaEmail" placeholder="your@email.com">
+        <button onclick="signupEmail()">Get Access</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>Â© 2026 hermes. Profit-driven SEO.</p>
+    </footer>
+  </div>
+
+  <script>
+    let keywords = [];
+    let chart = null;
+
+    function addKeyword() {
+      const keyword = document.getElementById('keyword').value.trim();
+      const difficulty = parseInt(document.getElementById('difficulty').value);
+      const volume = parseInt(document.getElementById('volume').value);
+      const cpc = parseFloat(document.getElementById('cpc').value);
+
+      if (!keyword || isNaN(difficulty) || isNaN(volume) || isNaN(cpc)) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      keywords.push({ keyword, difficulty, volume, cpc });
+      document.getElementById('keyword').value = '';
+      document.getElementById('difficulty').value = '';
+      document.getElementById('volume').value = '';
+      document.getElementById('cpc').value = '';
+
+      renderResults();
+      updateChart();
+    }
+
+    function addSampleKeyword(kw) {
+      const sampleData = {
+        'best crm software': { difficulty: 78, volume: 2400, cpc: 15.50 },
+        'crm for landscaping business': { difficulty: 32, volume: 480, cpc: 8.25 },
+        'how to organize client data': { difficulty: 15, volume: 1200, cpc: 3.50 },
+        'field service crm with invoicing': { difficulty: 28, volume: 320, cpc: 12.75 },
+        'salesforce alternative': { difficulty: 65, volume: 1800, cpc: 18.00 }
+      };
+
+      if (sampleData[kw]) {
+        const data = sampleData[kw];
+        keywords.push({ keyword: kw, difficulty: data.difficulty, volume: data.volume, cpc: data.cpc });
+        renderResults();
+        updateChart();
+      }
+    }
+
+    function loadSamples() {
+      keywords = [];
+      addSampleKeyword('best crm software');
+      addSampleKeyword('crm for landscaping business');
+      addSampleKeyword('how to organize client data');
+      addSampleKeyword('field service crm with invoicing');
+      addSampleKeyword('salesforce alternative');
+    }
+
+    function clearAll() {
+      keywords = [];
+      document.getElementById('results').innerHTML = '';
+      document.getElementById('insightBox').innerHTML = '';
+      document.getElementById('chartSection').style.display = 'none';
+      if (chart) chart.destroy();
+    }
+
+    function estimateCTR(difficulty) {
+      const baseCTR = 0.035;
+      const penaltyPerPoint = 0.0002;
+      return Math.max(0.005, baseCTR - (difficulty * penaltyPerPoint));
+    }
+
+    function calculateMetrics(keyword, difficulty, volume, cpc) {
+      const ctr = estimateCTR(difficulty);
+      const clicks = volume * ctr;
+      const conversionRate = Math.max(0.01, 0.08 - (difficulty * 0.0005));
+      const conversions = clicks * conversionRate;
+      const revenue = conversions * cpc;
+      const estimatedCost = 800 + (difficulty * 15);
+      const profit = revenue - estimatedCost;
+      const roi = profit > 0 ? (profit / estimatedCost) * 100 : -((estimatedCost - profit) / estimatedCost) * 100;
+
+      const volumeScore = Math.min(100, (volume / 5000) * 100);
+      const difficultyScore = Math.max(0, 100 - difficulty);
+      const profitScore = Math.min(100, (revenue / 2000) * 100);
+      const compositeScore = (volumeScore * 0.15) + (difficultyScore * 0.25) + (profitScore * 0.6);
+
+      return {
+        ctr: (ctr * 100).toFixed(2),
+        clicks: Math.round(clicks),
+        conversions: Math.round(conversions),
+        revenue: revenue.toFixed(2),
+        profit: profit.toFixed(2),
+        roi: roi.toFixed(1),
+        compositeScore: compositeScore.toFixed(1)
+      };
+    }
+
+    function renderResults() {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      if (keywords.length === 0) return;
+
+      const sortedKeywords = [...keywords].sort((a, b) => {
+        const metricsA = calculateMetrics(a.keyword, a.difficulty, a.volume, a.cpc);
+        const metricsB = calculateMetrics(b.keyword, b.difficulty, b.volume, b.cpc);
+        return parseFloat(metricsB.compositeScore) - parseFloat(metricsA.compositeScore);
+      });
+
+      sortedKeywords.forEach((kw, index) => {
+        const metrics = calculateMetrics(kw.keyword, kw.difficulty, kw.volume, kw.cpc);
+        const isProfitable = parseFloat(metrics.profit) > 0;
+
+        const card = document.createElement('div');
+        card.className = `result-card ${isProfitable ? 'profitable' : 'unprofitable'}`;
+        card.innerHTML = `
+          <div>
+            <div class="result-keyword">${kw.keyword}</div>
+            <div class="result-metrics">
+              <div class="metric">
+                <span class="metric-label">Volume:</span>
+                <span class="metric-value">${kw.volume.toLocaleString()}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Difficulty:</span>
+                <span class="metric-value">${kw.difficulty}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">CTR Estimate:</span>
+                <span class="metric-value">${metrics.ctr}%</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Est. Clicks:</span>
+                <span class="metric-value">${metrics.clicks.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="result-metrics">
+              <div class="metric">
+                <span class="metric-label">Est. Revenue:</span>
+                <span class="metric-value">$${metrics.revenue}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Est. Profit:</span>
+                <span class="metric-value">$${metrics.profit}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">ROI:</span>
+                <span class="metric-value">${metrics.roi}%</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Hermes Score:</span>
+                <span class="metric-value">${metrics.compositeScore}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        resultsDiv.appendChild(card);
+      });
+
+      renderInsight();
+    }
+
+    function renderInsight() {
+      const insightDiv = document.getElementById('insightBox');
+      if (keywords.length === 0) {
+        insightDiv.innerHTML = '';
+        return;
+      }
+
+      const topByVolume = [...keywords].sort((a, b) => b.volume - a.volume)[0];
+      const topByProfit = [...keywords].sort((a, b) => {
+        const profitA = parseFloat(calculateMetrics(a.keyword, a.difficulty, a.volume, a.cpc).profit);
+        const profitB = parseFloat(calculateMetrics(b.keyword, b.difficulty, b.volume, b.cpc).profit);
+        return profitB - profitA;
+      })[0];
+
+      insightDiv.innerHTML = `
+        <div class="insight-box">
+          <h3>Volume vs. Profit Insight</h3>
+          <p>"${topByVolume.keyword}" has the highest search volume (${topByVolume.volume.toLocaleString()} searches), but "${topByProfit.keyword}" is actually more profitable. This is the hermes differenceâprofit-per-path reveals opportunities your competitors are missing.</p>
+        </div>
+      `;
+    }
+
+    function updateChart() {
+      const chartSection = document.getElementById('chartSection');
+      if (keywords.length === 0) {
+        chartSection.style.display = 'none';
+        return;
+      }
+      chartSection.style.display = 'block';
+
+      const labels = keywords.map(k => k.keyword);
+      const hermesScores = keywords.map(k => {
+        const metrics = calculateMetrics(k.keyword, k.difficulty, k.volume, k.cpc);
+        return parseFloat(metrics.compositeScore);
+      });
+      const volumeScores = keywords.map(k => Math.min(100, (k.volume / 5000) * 100));
+
+      const ctx = document.getElementById('rankingChart').getContext('2d');
+
+      if (chart) {
+        chart.destroy();
+      }
+
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Traditional (Volume-Based)',
+              data: volumeScores,
+              backgroundColor: 'rgba(107, 114, 128, 0.5)',
+              borderRadius: 6,
+              borderSkipped: false
+            },
+            {
+              label: 'Hermes (Profit-Based)',
+              data: hermesScores,
+              backgroundColor: 'rgba(245, 166, 35, 0.8)',
+              borderRadius: 6,
+              borderSkipped: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: '#d1d5db',
+                font: { size: 12 }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                color: '#9ca3af'
+              },
+              grid: {
+                color: 'rgba(107, 114, 128, 0.1)'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#9ca3af'
+              },
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function signupEmail() {
+      const email = document.getElementById('ctaEmail').value;
+      if (!email) {
+        alert('Please enter your email');
+        return;
+      }
+      alert(`Thanks for your interest! We'll reach out to ${email} soon.`);
+      document.getElementById('ctaEmail').value = '';
+    }
+  </script>
+</body>
+</html>
