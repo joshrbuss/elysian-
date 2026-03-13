@@ -3,35 +3,151 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Lab — Three Ideas, One Obsession</title>
+  <title>Product Lab &mdash; Three Ideas, One Obsession</title>
   <meta name="description" content="Three product concepts by Josh: hermes, charon, kairos. Measuring what actually matters.">
-  <meta property="og:title" content="Product Lab — Three Ideas, One Obsession">
+  <meta property="og:title" content="Product Lab &mdash; Three Ideas, One Obsession">
   <meta property="og:description" content="Three product concepts by Josh exploring profit per path, silent signals, and optimal timing.">
   <meta property="og:type" content="website">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%); color: #e5e7eb; min-height: 100vh; padding: 2rem 1rem; }
-    .container { max-width: 1200px; margin: 0 auto; }
-    header { text-align: center; margin-bottom: 5rem; padding-top: 2rem; }
-    header h1 { font-size: 3rem; font-weight: 700; line-height: 1.2; margin-bottom: 1rem; letter-spacing: -0.02em; }
-    @media (max-width: 768px) { header h1 { font-size: 2rem; } }
-    header p { font-size: 1.1rem; color: #9ca3af; max-width: 600px; margin: 0 auto; font-weight: 500; }
-    .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-bottom: 5rem; }
-    .product-card { background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(107, 114, 128, 0.2); border-radius: 12px; padding: 2.5rem; transition: all 0.3s ease; display: flex; flex-direction: column; }
-    .product-card:hover { border-color: rgba(107, 114, 128, 0.4); transform: translateY(-4px); background: rgba(31, 41, 55, 0.8); }
-    .product-name { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
-    .product-name.hermes { color: #F5A623; }
-    .product-name.charon { color: #8B5CF6; }
-    .product-name.kairos { color: #06B6D4; }
-    .product-tagline { font-size: 0.9rem; color: #d1d5db; margin-bottom: 1.5rem; font-weight: 600; }
-    .product-description { color: #9ca3af; font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; flex-grow: 1; }
-    .product-link { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: gap 0.2s ease; }
-    .product-card.hermes-card .product-link { color: #F5A623; }
-    .product-card.charon-card .product-link { color: #8B5CF6; }
-    .product-card.kairos-card .product-link { color: #06B6D4; }
-    .product-link:hover { gap: 1rem; }
-    footer { text-align: center; color: #6b7280; font-size: 0.9rem; padding-top: 3rem; border-top: 1px solid rgba(107, 114, 128, 0.1); margin-top: 4rem; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 5rem;
+      padding-top: 2rem;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2rem;
+      }
+    }
+
+    header p {
+      font-size: 1.1rem;
+      color: #9ca3af;
+      max-width: 600px;
+      margin: 0 auto;
+      font-weight: 500;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-bottom: 5rem;
+    }
+
+    .product-card {
+      background: rgba(31, 41, 55, 0.5);
+      border: 1px solid rgba(107, 114, 128, 0.2);
+      border-radius: 12px;
+      padding: 2.5rem;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover {
+      border-color: rgba(107, 114, 128, 0.4);
+      transform: translateY(-4px);
+      background: rgba(31, 41, 55, 0.8);
+    }
+
+    .product-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .product-name.hermes {
+      color: #F5A623;
+    }
+
+    .product-name.charon {
+      color: #8B5CF6;
+    }
+
+    .product-name.kairos {
+      color: #06B6D4;
+    }
+
+    .product-tagline {
+      font-size: 0.9rem;
+      color: #d1d5db;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .product-description {
+      color: #9ca3af;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      flex-grow: 1;
+    }
+
+    .product-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: gap 0.2s ease;
+    }
+
+    .product-card.hermes-card .product-link {
+      color: #F5A623;
+    }
+
+    .product-card.charon-card .product-link {
+      color: #8B5CF6;
+    }
+
+    .product-card.kairos-card .product-link {
+      color: #06B6D4;
+    }
+
+    .product-link:hover {
+      gap: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.9rem;
+      padding-top: 3rem;
+      border-top: 1px solid rgba(107, 114, 128, 0.1);
+      margin-top: 4rem;
+    }
   </style>
 </head>
 <body>
@@ -39,26 +155,36 @@
     <header>
       <h1>three ideas. one obsession: measuring what actually matters.</h1>
     </header>
+
     <div class="products">
       <div class="product-card hermes-card">
         <h2 class="product-name hermes">hermes</h2>
         <p class="product-tagline">profit per path</p>
-        <p class="product-description">Your most profitable keyword is the one every SEO tool tells you to ignore. hermes reveals the keywords your competitors miss — the ones that actually make money.</p>
-        <a href="/hermes/" class="product-link">Explore →</a>
+        <p class="product-description">
+          Your most profitable keyword is the one every SEO tool tells you to ignore. hermes reveals the keywords your competitors miss &mdash; the ones that actually make money.
+        </p>
+        <a href="/hermes/" class="product-link">Explore &rarr;</a>
       </div>
+
       <div class="product-card charon-card">
         <h2 class="product-name charon">charon</h2>
         <p class="product-tagline">the silent signal</p>
-        <p class="product-description">Guest checkout isn't a success metric. It's a cry for help. charon finds out why your best customers won't create an account.</p>
-        <a href="/charon/" class="product-link">Explore →</a>
+        <p class="product-description">
+          Guest checkout isn't a success metric. It's a cry for help. charon finds out why your best customers won't create an account.
+        </p>
+        <a href="/charon/" class="product-link">Explore &rarr;</a>
       </div>
+
       <div class="product-card kairos-card">
         <h2 class="product-name kairos">kairos</h2>
         <p class="product-tagline">the right moment</p>
-        <p class="product-description">Your email cadence was decided by a guess. kairos models the exact moment an email goes from helpful to harmful.</p>
-        <a href="/kairos/" class="product-link">Explore →</a>
+        <p class="product-description">
+          Your email cadence was decided by a guess. kairos models the exact moment an email goes from helpful to harmful.
+        </p>
+        <a href="/kairos/" class="product-link">Explore &rarr;</a>
       </div>
     </div>
+
     <footer>
       <p>Built by Josh. Powered by curiosity.</p>
     </footer>
