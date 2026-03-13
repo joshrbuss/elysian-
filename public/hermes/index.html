@@ -530,12 +530,10 @@
     function calculateMetrics(keyword, difficulty, volume, cpc) {
       const ctr = estimateCTR(difficulty);
       const clicks = volume * ctr;
-      const conversionRate = Math.max(0.01, 0.08 - (difficulty * 0.0005));
-      const conversions = clicks * conversionRate;
-      const revenue = conversions * cpc;
-      const estimatedCost = 800 + (difficulty * 15);
+      const revenue = clicks * cpc;
+      const estimatedCost = 150 + (difficulty * 3);
       const profit = revenue - estimatedCost;
-      const roi = profit > 0 ? (profit / estimatedCost) * 100 : -((estimatedCost - profit) / estimatedCost) * 100;
+      const roi = estimatedCost > 0 ? ((profit / estimatedCost) * 100) : 0;
 
       const volumeScore = Math.min(100, (volume / 5000) * 100);
       const difficultyScore = Math.max(0, 100 - difficulty);
@@ -545,7 +543,7 @@
       return {
         ctr: (ctr * 100).toFixed(2),
         clicks: Math.round(clicks),
-        conversions: Math.round(conversions),
+        conversions: Math.round(clicks * 0.03),
         revenue: revenue.toFixed(2),
         profit: profit.toFixed(2),
         roi: roi.toFixed(1),
@@ -637,7 +635,7 @@
       insightDiv.innerHTML = `
         <div class="insight-box">
           <h3>Volume vs. Profit Insight</h3>
-          <p>"${topByVolume.keyword}" has the highest search volume (${topByVolume.volume.toLocaleString()} searches), but "${topByProfit.keyword}" is actually more profitable. This is the hermes differenceâprofit-per-path reveals opportunities your competitors are missing.</p>
+          <p>"${topByVolume.keyword}" has the highest search volume (${topByVolume.volume.toLocaleString()} searches), but "${topByProfit.keyword}" is actually more profitable. This is the hermes difference\u2014profit-per-path reveals opportunities your competitors are missing.</p>
         </div>
       `;
     }
