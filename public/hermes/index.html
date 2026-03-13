@@ -521,36 +521,50 @@
       if (chart) chart.destroy();
     }
 
-    function estimateCTR(difficulty) {
-      const baseCTR = 0.035;
-      const penaltyPerPoint = 0.0002;
-      return Math.max(0.005, baseCTR - (difficulty * penaltyPerPoint));
+        // CTR by expected ranking position, mapped from difficulty tier.
+    // Position CTR data: Backlinko 2023 organic CTR study.
+    function estimateCTR(d) {
+        if (d <= 10) return 0.276; // P1: 27.6%
+        if (d <= 20) return 0.158; // P2: 15.8%
+        if (d <= 30) return 0.110; // P3: 11.0%
+        if (d <= 40) return 0.084; // P4: 8.4%
+        if (d <= 55) return 0.054; // P5-6: 5.4%
+        if (d <= 70) return 0.025; // P8-10: 2.5%
+        if (d <= 85) return 0.010; // P12+: 1.0%
+        return 0.004;              // P20+: 0.4%
     }
-
+    // Estimated content + link building cost to rank, scaled by difficulty.
+    function estimateCost(d) {
+        if (d <= 15) return 300;
+        if (d <= 30) return 600;
+        if (d <= 45) return 1200;
+        if (d <= 60) return 2500;
+        if (d <= 75) return 5500;
+        if (d <= 90) return 10000;
+        return 18000;
+    }
     function calculateMetrics(keyword, difficulty, volume, cpc) {
-      const ctr = estimateCTR(difficulty);
-      const clicks = volume * ctr;
-      const revenue = clicks * cpc;
-      const estimatedCost = 150 + (difficulty * 3);
-      const profit = revenue - estimatedCost;
-      const roi = estimatedCost > 0 ? ((profit / estimatedCost) * 100) : 0;
-
-      const volumeScore = Math.min(100, (volume / 5000) * 100);
-      const difficultyScore = Math.max(0, 100 - difficulty);
-      const profitScore = Math.min(100, (revenue / 2000) * 100);
-      const compositeScore = (volumeScore * 0.15) + (difficultyScore * 0.25) + (profitScore * 0.6);
-
-      return {
-        ctr: (ctr * 100).toFixed(2),
-        clicks: Math.round(clicks),
-        conversions: Math.round(clicks * 0.03),
-        revenue: revenue.toFixed(2),
-        profit: profit.toFixed(2),
-        roi: roi.toFixed(1),
-        compositeScore: compositeScore.toFixed(1)
-      };
+        const ctr = estimateCTR(difficulty);
+        const clicks = volume * ctr;
+        // Traffic Value: clicks x CPC — same metric Ahrefs/SEMrush use for organic keyword worth.
+        const trafficValue = clicks * cpc;
+        const rankingCost = estimateCost(difficulty);
+        const netValue = trafficValue - rankingCost;
+        const roi = rankingCost > 0 ? (netValue / rankingCost) * 100 : 0;
+        const volumeScore = Math.min(100, (volume / 5000) * 100);
+        const diffScore = Math.max(0, 100 - difficulty);
+        const valueScore = Math.min(100, (trafficValue / 2000) * 100);
+        const compositeScore = (volumeScore * 0.15) + (diffScore * 0.25) + (valueScore * 0.60);
+        return {
+            ctr: (ctr * 100).toFixed(1),
+            clicks: Math.round(clicks),
+            trafficValue: trafficValue.toFixed(0),
+            rankingCost: rankingCost.toFixed(0),
+            netValue: netValue.toFixed(0),
+            roi: roi.toFixed(1),
+            compositeScore: compositeScore.toFixed(1)
+        };
     }
-
     function renderResults() {
       const resultsDiv = document.getElementById('results');
       resultsDiv.innerHTML = '';
@@ -565,7 +579,7 @@
 
       sortedKeywords.forEach((kw, index) => {
         const metrics = calculateMetrics(kw.keyword, kw.difficulty, kw.volume, kw.cpc);
-        const isProfitable = parseFloat(metrics.profit) > 0;
+        const isProfitable = parseFloat(metrics.netValue) > 0;
 
         const card = document.createElement('div');
         card.className = `result-card ${isProfitable ? 'profitable' : 'unprofitable'}`;
@@ -594,21 +608,22 @@
           <div>
             <div class="result-metrics">
               <div class="metric">
-                <span class="metric-label">Est. Revenue:</span>
-                <span class="metric-value">$${metrics.revenue}</span>
-              </div>
-              <div class="metric">
-                <span class="metric-label">Est. Profit:</span>
-                <span class="metric-value">$${metrics.profit}</span>
-              </div>
-              <div class="metric">
-                <span class="metric-label">ROI:</span>
-                <span class="metric-value">${metrics.roi}%</span>
-              </div>
-              <div class="metric">
-                <span class="metric-label">Hermes Score:</span>
-                <span class="metric-value">${metrics.compositeScore}</span>
-              </div>
+                <span class="metric-label">Est. Traffic Value:</span>
+                            <span class="metric-value">$${Number(metrics.trafficValue).toLocaleString()}/mo</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Ranking Cost:</span>
+                            <span class="metric-value">$${Number(metrics.rankingCost).toLocaleString()}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Net Value:</span>
+                            <span class="metric-value" style="color:${isProfitable?'#10b981':'#ef4444'}">$${Number(metrics.netValue).toLocaleString()}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Hermes Score:</span>
+                            <span class="metric-value">${metrics.compositeScore}</span>
+                        </div>
+                    </div>
             </div>
           </div>
         `;
@@ -627,10 +642,10 @@
 
       const topByVolume = [...keywords].sort((a, b) => b.volume - a.volume)[0];
       const topByProfit = [...keywords].sort((a, b) => {
-        const profitA = parseFloat(calculateMetrics(a.keyword, a.difficulty, a.volume, a.cpc).profit);
-        const profitB = parseFloat(calculateMetrics(b.keyword, b.difficulty, b.volume, b.cpc).profit);
-        return profitB - profitA;
-      })[0];
+        const profitA = parseFloat(calculateMetrics(a.keyword, a.difficulty, a.volume, a.cpc).netValue);
+            const profitB = parseFloat(calculateMetrics(b.keyword, b.difficulty, b.volume, b.cpc).netValue);
+            return profitB - profitA;
+        })[0];
 
       insightDiv.innerHTML = `
         <div class="insight-box">
@@ -717,15 +732,35 @@
       });
     }
 
-    function signupEmail() {
-      const email = document.getElementById('ctaEmail').value;
-      if (!email) {
-        alert('Please enter your email');
-        return;
-      }
-      alert(`Thanks for your interest! We'll reach out to ${email} soon.`);
-      document.getElementById('ctaEmail').value = '';
+        async function signupEmail() {
+        const input = document.getElementById('ctaEmail');
+        const btn = document.querySelector('.email-form button');
+        const email = input.value.trim();
+        if (!email || !email.includes('@')) { input.focus(); return; }
+        btn.textContent = 'Sending...';
+        btn.disabled = true;
+        try {
+            const res = await fetch('https://formspree.io/f/xpwdgjqk', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ email, source: 'hermes-calculator' })
+            });
+            if (res.ok) {
+                btn.textContent = "You're in ✓";
+                input.value = '';
+                input.placeholder = "You're on the list!";
+            } else {
+                btn.textContent = 'Try again';
+                btn.disabled = false;
+            }
+        } catch(e) {
+            btn.textContent = 'Try again';
+            btn.disabled = false;
+        }
     }
+    document.querySelector('.email-form input').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') signupEmail();
+    });
   </script>
 </body>
 </html>
